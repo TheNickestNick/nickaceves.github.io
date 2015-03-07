@@ -1,0 +1,89 @@
+define(['./pooled'], function(pooled) {
+  function Entity() {
+    this.x = 0;
+    this.y = 0;
+    this.r = 0;
+    this.velx = 0;
+    this.vely = 0;
+    this.velr = 0;
+    this.ttl = null;
+    this.dead = false;
+  }
+
+  Entity.prototype.wrap = function(w, h) {
+    while (this.x > w) { this.x -= w; }
+    while (this.x < 0) { this.x += w; }
+    while (this.y > h) { this.y -= h; }
+    while (this.y < 0) { this.y += h; }
+  };
+
+  Entity.prototype.updatePosition = function() {
+    this.x += this.velx;
+    this.y += this.vely;
+  };
+
+  Entity.prototype.updateRotation = function() {
+    this.r += this.velr;
+  };
+
+  Entity.prototype.updateTTL = function() {
+    if (this.ttl === null || this.ttl === 0) {
+      return;
+    }
+
+    this.ttl--;
+    if (this.ttl === 0) {
+      this.die();
+    }
+  };
+
+  Entity.prototype.die = function() {
+    this.dead = true;
+  };
+
+  Entity.prototype.update = function() {
+    this.updatePosition();
+    this.updateRotation();
+    this.updateTTL();
+  };
+
+  Entity.prototype.isDead = function() {
+    return this.dead;
+  };
+
+  Entity.define = function(defn) {
+    var constructor;
+
+    if (typeof defn.ctor === 'function') {
+      constructor = function() {
+        Entity.call(this);
+        defn.ctor.call(this);
+      };
+    }
+    else {
+      constructor = function() {
+        Entity.call(this);
+      }
+    }
+
+    constructor.prototype = new Entity();
+    constructor.prototype.constructor = constructor;
+
+    for (var k in defn) {
+      if (k !== 'update' && k !== 'ctor') {
+        constructor.prototype[k] = defn[k];
+      }
+    }
+
+    if (typeof defn.update === 'function') {
+      constructor.prototype.update = function() {
+        Entity.prototype.update.call(this);
+        defn.update.call(this);
+      };
+    }
+
+    return pooled.makePooled(constructor);
+  };
+
+  return Entity;
+});
