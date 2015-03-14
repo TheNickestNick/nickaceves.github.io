@@ -3,38 +3,47 @@
   <head>
     <title>Pi Day Counter</title>
     <style>
-      #datetime {
+      html, body, table { height: 100%; width: 100%; }
+      td {
         text-align: center;
-        height: 100%;
-        padding-top: 50%;
-        margin-top: -1em;
+      }
+    
+      #datetime {
+        vertical-align: bottom;
         font-size: 72px;
         font-family: "Courier New", Courier, monospace;
       }
       
       #pi {
-        text-align: center;
+        vertical-align: top;
         font-family: "Courier New", Courier, monospace;
         font-size: 36px;
+      }
+      
+      #wrapper {
+        display: table;
       }
     </style>
   </head>
   <body>
-    <div id="datetime"></div>
-    <div id="pi"></div>
+    <!-- Because the only thing better than iframes is tables, bitches. -->
+    <table>
+      <tr><td id="datetime"></td></tr>
+      <tr><td id="pi"></td></tr>
+    </table>
     <script>
       function pad2(i) {
         return (i + 100).toString().substr(1, 2);
       }
-      
+            
       function formatDate(d) {
         return (d.getMonth()+1) + '/' + d.getDate() + '/' + (d.getFullYear() - 2000) + 
-               ' ' + d.getHours() + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds());
+               ' ' + (d.getHours() % 12) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds());
       }
       
       function formatPi(d) {
         return (d.getMonth()+1) + '.' + d.getDate() + (d.getFullYear() - 2000) + 
-                d.getHours() + d.getMinutes() + d.getSeconds();
+                (d.getHours() % 12) + d.getMinutes() + d.getSeconds();
       }
     
       var datetime = document.getElementById('datetime');
@@ -46,8 +55,9 @@
         var piText = formatPi(date);
         pi.textContent = piText;
         
-        if (piText == '3.141592653') {        
-          document.body.style.fontWeight = 'bold';
+        if (piText == '3.141592653') {
+          pi.style.fontWeight = 'bold';
+          pi.style.color = 'maroon';
           return;
         }
         
