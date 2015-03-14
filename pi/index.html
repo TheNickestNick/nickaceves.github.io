@@ -6,30 +6,35 @@
       html, body, table { height: 100%; width: 100%; }
       td {
         text-align: center;
+        vertical-align: middle;
       }
     
       #datetime {
-        vertical-align: bottom;
         font-size: 72px;
         font-family: "Courier New", Courier, monospace;
       }
       
       #pi {
-        vertical-align: top;
         font-family: "Courier New", Courier, monospace;
         font-size: 36px;
       }
       
-      #wrapper {
-        display: table;
+      #surprise {
+        visibility: hidden;
+        width: 250px;
+        margin-top: -250px;
       }
     </style>
   </head>
   <body>
-    <!-- Because the only thing better than iframes is tables, bitches. -->
     <table>
-      <tr><td id="datetime"></td></tr>
-      <tr><td id="pi"></td></tr>
+      <tr>
+        <td>
+          <img id="surprise" src="http://i.imgur.com/yrFFiFD.jpg"></img>
+          <div id="datetime"></div>
+          <div id="pi"></div>
+        </td>
+      </tr>
     </table>
     <script>
       function pad2(i) {
@@ -59,6 +64,11 @@
         if (piText == '3.141592653') {
           pi.style.fontWeight = 'bold';
           pi.style.color = 'maroon';
+          
+          setTimeout(function() {
+            var surprise = document.getElementById('surprise');
+            surprise.style.visibility = 'visible';
+          }, 10000)
           return;
         }
 
